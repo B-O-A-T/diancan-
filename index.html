@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>重庆大酒店后台管理系统</title>
+    
+    <!-- Bootstrap Core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="dist/css/sb-admin-2.css" rel="stylesheet">
+
+    <!-- Morris Charts CSS -->
+    <link href="vendor/morrisjs/morris.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    
+    <style type="text/css">
+    	body{margin:0; padding:0;}
+    	#page-wrapper{
+    		padding: 0 0px;
+    	}
+    </style>
+    
+</head>
+<body>
+<div id="wrapper">
+	<!--
+    	作者：offline
+    	时间：2018-03-13
+    	描述：Navigation 导航？
+    -->
+    <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+    	<div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html" style=" font-size:40px"> 重庆大酒店后台管理系统 </a>
+        </div>
+        <!-- /.navbar-header -->
+    	
+    	<ul class="nav navbar-top-links navbar-right">
+		<!-- /.dropdown -->
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-user">
+                    
+                    <li><a href="login.html" onclick="logout()"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                    </li>
+                </ul>
+                <!-- /.dropdown-user -->
+            </li>
+    	</ul>
+    	
+    	<div class="navbar-default sidebar" role="navigation">
+    		<div class="sidebar-nav navbar-collapse">
+    			<ul class="nav" id="side-menu">
+    				<li>
+    					<a href="main.html" target="iframe_a"><i class="fa fa-dashboard fa-fw"></i>首页</a>
+	    			</li>
+    				<li>
+                        <a href="#"><i class="fa fa-table fa-fw"></i> 餐厅配置<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="boards.html" target="iframe_a">餐桌管理</a>
+                            </li>
+                            <li>
+                                <a href="foods.html" target="iframe_a">菜品管理</a>
+                            </li>
+                            <li>
+                                <a href="foodtypes.html" target="iframe_a">菜系管理</a>
+                            </li>
+                            <li>
+                                <a href="coupons.html" target="iframe_a">卡券管理</a>
+                            </li>
+                        </ul>
+                        <!-- /.nav-second-level -->
+                    </li>
+                    
+    				<li>
+    					<a href="orders.html" target="iframe_a"><i class="fa fa-files-o fa-fw"></i>订单管理</a>
+    				</li>
+    				<li>
+    					<a href="user.html" target="iframe_a"><i class="fa fa-male fa-fw"></i>会员管理</a>
+    				</li>
+    				<li>
+    					<a href="admins.html" target="iframe_a"><i class="fa fa-male fa-fw"></i>管理员账户管理</a>
+    				</li>
+    				<li>
+    					<a href="statistics.html" target="iframe_a"><i class="fa fa-stack-overflow fa-fw"></i>统计管理</a>
+    				</li>
+    				<li>
+    					<a href="log.html" target="iframe_a"><i class="fa fa-file-text fa-fw"></i>日志</a>
+    				</li>
+    			</ul>
+    		</div>
+    	</div>
+    	
+    </nav>
+    <div id="page-wrapper">
+    	<iframe src="main.html"  id = "iframe"	 name="iframe_a" frameborder="0" scrolling="no" onload="changeFrameHeight()" width="100%" >
+	    	<div></div>
+		</iframe>
+    </div>
+</div>
+</body>
+    <script src="vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="vendor/metisMenu/metisMenu.min.js"></script>
+
+    <!-- Morris Charts JavaScript -->
+    <script src="vendor/raphael/raphael.min.js"></script>
+    <script src="vendor/morrisjs/morris.min.js"></script>
+    <!--<script src="data/morris-data.js"></script>-->
+
+    <!-- Custom Theme JavaScript -->
+    <script src="dist/js/sb-admin-2.js"></script>
+    <script type="text/javascript" src="js/cookieSet.js" ></script>
+    <script type="text/javascript" src="js/index.js" ></script>
+    <script type="text/javascript">
+	function changeFrameHeight(){
+	    var ifm= document.getElementById("iframe"); 
+	    ifm.height=document.documentElement.clientHeight;
+	
+	}
+	
+	window.onresize=function(){  
+	     changeFrameHeight();  
+	} 
+    </script>
+</html>

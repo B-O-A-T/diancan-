@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="<%=basePath%>">
+
+    <meta charset="UTF-8">
+    <title>编辑管理员信息</title>
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="plugins/layui/css/layui.css" rel="stylesheet">
+    <link href="css/form.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="form-hidden">
+    <form name="adminForm" id="adminForm" class="layui-form form-horizontal m-t col-sm-12 panel panel-primary signupForm"
+          novalidate="novalidate">
+        <div class="panel-body">
+
+            <input type="hidden" name="adminId" id="adminId" />
+
+
+            <div class="form-group col-md-6 col-sm-12">
+                <label class="col-sm-3 control-label">管理员账户：</label>
+                <div class="col-sm-8">
+                    <input id="adminAccount" name="adminAccount" class="form-control" type="text" required="required"
+                           aria-required="true"
+                           placeholder="请设定管理员账户" >
+                </div>
+            </div>
+            <div class="form-group col-md-6 col-sm-12">
+                <label class="col-sm-3 control-label">管理员密码：</label>
+                <div class="col-sm-8">
+                    <input id="adminPassword" name="adminPassword" class="form-control" type="text" required="required"
+                           aria-required="true"
+                           placeholder="请设定管理员密码" >
+                </div>
+            </div>
+            <div class="form-group col-md-6 col-sm-12">
+                <label class="col-sm-3 control-label">管理员权限等级：</label>
+                <div class="col-sm-8">
+                    <input id="adminRights" name="adminRights" class="form-control" type="text" required="required"
+                           aria-required="true"
+                           placeholder="请设定管理员权限等级" >
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-xs-12 sub-group">
+            <div class="col-xs-6 text-center">
+                <button class="btn btn-default cancel" type="button"
+                        onclick="parent.layer.close(parent.layer.getFrameIndex(window.name));">取消
+                </button>
+            </div>
+            <div class="col-xs-6 text-center">
+                <button class="btn btn-primary submit" type="button" id="submitButton">提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap-validator/0.5.3/js/bootstrapValidator.js"></script>
+<script src="plugins/jquery.slimscroll.min.js"></script><!--滚动条插件-->
+<script src="plugins/layui/layui.js"></script>
+<script type="text/javascript" src="js/cookieSet.js" ></script>
+<script type="text/javascript" src="js/sha1.js" ></script>
+<script src="js/getToJson.js"></script>
+
+<%--方法函数--%>
+<script type="text/javascript">
+
+/*layui控件初始化，表单与日期*/
+    layui.use(['layer', 'form'], function () {
+    });
+    var sessionId=getCookie("sessionId");
+	var form = $('#adminForm');
+	$(document).ready(function(){
+		form.bootstrapValidator({
+			message: '输入值不合法',
+			excluded:[":disabled"],
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields:{
+            	adminAccount:{
+            		message:'管理员账户不合法',
+            		trigger:"change",
+            		validators:{
+            			notEmpty:{
+            				message:'账户名不能为空'
+            			},
+            			stringLength:{
+            				min:1,
+            				max:30,
+            				message:'请输入1到30个字符'
+            			},
+            			regexp: {
+                            regexp: /^[a-zA-Z0-9_\. \u4e00-\u9fa5 ]+$/,
+                            message: '账户名只能由字母、数字、点、下划线和汉字组成 '
+                        }
+            		}
+            	},
+            	adminPassword:{
+            		message:'管理员密码不合法',
+            		trigger:"change",
+            		validators:{
+            			notEmpty:{
+            				message:'密码不能为空'
+            			},
+            			stringLength:{
+            				min:1,
+            				max:50,
+            				message:'请输入1到40个字符'
+            			},
+//          			regexp: {
+//                          regexp: /^[\u4e00-\u9fa5_a-zA-Z0-9]+$ /,
+//                          message: '密码只能由数字组成 '
+//                      }
+            		}
+            	},
+            	adminRights:{
+            		message:'管理员权限等级不合法',
+            		trigger:"change",
+            		validators:{
+            			notEmpty:{
+            				message:'权限等级不能为空'
+            			},
+            			stringLength:{
+            				min:1,
+            				max:30,
+            				message:'请输入1到30个字符'
+            			}
+            		}
+            	}
+            }
+		})
+		
+	})
+    
+    /*滚动条*/
+    $('.panel-body').slimScroll({height: "100%", color: '#000', railOpacity: .4, alwaysVisible: !1});
+
+
+	 //获取url中的参数
+	function getParams(key) {
+        var reg = new RegExp("(^|&)" + key + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) {
+            return unescape(r[2]);
+        }
+        return null;
+   	};          
+	var adminId=getParams("adminId");
+	var u = "http://192.168.1.168:8080/selectAdmin?id="+adminId+"&sessionId=" +sessionId;
+	function getData(adminId){	
+		$.ajax({
+            url: u,
+            type: 'post',
+//          data: {"boardId":6,"boardName":"6","boardPeopleNumber":4,"boardType":2}
+            async: true,    //或false,是否异步
+            timeout: 10000,    //超时时间
+            cache: false,
+            error: function (data) {
+                alert("系统错误，请联系维护人员");
+            },
+            success:function (data) {
+                var adminId = data.adminId;  
+                var adminAccount = data.adminAccount; 
+                var adminPassword = data.adminPassword;
+                var adminRights = data.adminRights;
+//				console.log(boardType);
+				$("#adminId").val(adminId).change();  
+				$("#adminAccount").val(adminAccount).change();  
+				$("#adminPassword").val(adminPassword).change();  
+				$("#adminRights").val(adminRights).change();  
+            }
+		});
+	}
+	if(adminId!=null){
+		getData(adminId);
+	}
+	
+	
+    //保存
+     $("#submitButton").click(function (){
+     	//进行表单验证
+     	adminForm.adminPassword.value= hex_sha1(adminForm.adminPassword.value);
+     	console.log(adminForm.adminPassword.value);
+     	var bv = form.data('bootstrapValidator');
+     	console.log(bv.isValid());
+//   	bv.validate();
+     	if(bv.isValid()){
+     		if ($("#adminId").val() == "") {
+	             $.ajax({
+		            url: 'http://192.168.1.168:8080/newAdminSubmit?sessionId=' +sessionId,
+		            data: $('#adminForm').serialize(),
+		            dataType: 'JSON',
+		            type: 'POST',
+		            async: true,    //或false,是否异步
+		            timeout: 10000,    //超时时间
+		            cache: false,
+		            error: function (data) {
+		                alert("系统错误，请联系维护人员");
+		            },
+		            success: function (data) {
+		                console.log(data.success);
+		                if (data.success) {
+		                    // close 当前对话框
+		                    parent.layer.close(parent.layer.getFrameIndex(window.name));
+		                    parent.location.reload(true);
+		                } else {
+		                    layer.msg(data.message, {
+		                        time: 2000, //2s后自动关闭
+		                        icon: 2
+		                    });
+		                }
+		            }
+		        });
+	        } else {
+		        $.ajax({
+		            url: 'http://192.168.1.168:8080/editAdminSubmit?sessionId=' +sessionId,
+		            data: $('#adminForm').serialize(),
+		            dataType: 'JSON',
+		            type: 'POST',
+		            async: true,    //或false,是否异步
+		            timeout: 10000,    //超时时间
+		            cache: false,
+		            
+		            error: function (data) {
+		                alert("系统错误，请联系维护人员");
+		            },
+		            success: function (data) {
+//		                console.log(data.success);
+		                if (data.success) {
+		                    // close 当前对话框
+		                    parent.layer.close(parent.layer.getFrameIndex(window.name));
+		                    parent.location.reload(true);
+//		                    $("#adminstable").bootstrapTable('refresh');
+		                } else {
+		                    layer.msg(data.message, {
+		                        time: 2000, //2s后自动关闭
+		                        icon: 2
+		                    });
+		                }
+		            }
+		        });
+	
+	        }
+     	}
+        
+
+    })
+
+</script>
+
+</html>	

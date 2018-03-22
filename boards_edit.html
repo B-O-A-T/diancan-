@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="<%=basePath%>">
+
+    <meta charset="UTF-8">
+    <title>编辑餐桌</title>
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="plugins/layui/css/layui.css" rel="stylesheet">
+    <link href="css/form.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="form-hidden">
+    <form name="boardForm" id="boardForm" class="layui-form form-horizontal m-t col-sm-12 panel panel-primary signupForm"
+          novalidate="novalidate">
+        <div class="panel-body">
+
+            <input type="hidden" name="boardId" id="boardId" />
+
+
+            <div class="form-group col-md-6 col-sm-12">
+                <label class="col-sm-3 control-label">餐桌名：</label>
+                <div class="col-sm-8">
+                    <input id="boardName" name="boardName" class="form-control" type="text" required="required"
+                           aria-required="true"
+                           placeholder="请输入餐桌名" >
+                </div>
+            </div>
+
+
+            <div class="form-group col-md-6 col-sm-12">
+                <label class="col-sm-3 control-label">餐桌容纳人数：</label>
+                <div class="col-sm-8">
+                    <input id="boardPeopleNumber" name="boardPeopleNumber" class="form-control" type="text" placeholder="餐桌最大可坐人数"
+                			>
+                </div>
+            </div>
+            <div class="form-group col-md-6 col-sm-12">
+                <label class="col-sm-3 control-label">餐桌类型：</label>
+                <div class="col-sm-8">
+                    <input class="form-control" type="hidden" id="boardType" name="boardType" aria-required="true"
+                           placeholder="1、中餐桌；2、西餐桌" >
+                    <div>
+				        <input type="radio" name="ans_boardType" value="1" title="中餐桌" >
+				        <input type="radio" name="ans_boardType" value="2" title="西餐桌">
+				    </div> 
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-xs-12 sub-group">
+            <div class="col-xs-6 text-center">
+                <button class="btn btn-default cancel" type="button"
+                        onclick="parent.layer.close(parent.layer.getFrameIndex(window.name));">取消
+                </button>
+            </div>
+            <div class="col-xs-6 text-center">
+                <button class="btn btn-primary submit" type="button" id="submitButton">提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap-validator/0.5.3/js/bootstrapValidator.js"></script>
+<script src="plugins/jquery.slimscroll.min.js"></script><!--滚动条插件-->
+<script src="plugins/layui/layui.js"></script>
+<script type="text/javascript" src="js/cookieSet.js" ></script>
+<script src="js/getToJson.js"></script>
+
+<%--方法函数--%>
+<script type="text/javascript">
+
+/*layui控件初始化，表单与日期*/
+    layui.use(['layer', 'form'], function () {
+    });
+    var sessionId=getCookie("sessionId");
+	var form = $('#boardForm');
+	$(document).ready(function(){
+		form.bootstrapValidator({
+			message: '输入值不合法',
+			excluded:[":disabled"],
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields:{
+            	boardName:{
+            		message:'餐桌名不合法',
+            		trigger:"change",
+            		validators:{
+            			notEmpty:{
+            				message:'餐桌名不能为空'
+            			},
+            			stringLength:{
+            				min:1,
+            				max:30,
+            				message:'请输入1到30个字符'
+            			},
+            			regexp: {
+                            regexp: /^(([1-9]\d*)|([\u4e00-\u9fa5]+))$/,
+                            message: '餐桌名只能由数字或汉字组成 '
+                        }
+            		}
+            	},
+            	boardPeopleNumber:{
+            		message:'餐桌容纳人数不合法',
+            		trigger:"change",
+            		validators:{
+            			notEmpty:{
+            				message:'餐桌容纳人数不能为空'
+            			},
+            			stringLength:{
+            				min:1,
+            				max:2,
+            				message:'请输入小于100的数字'
+            			},
+            			regexp: {
+                            regexp: /^([1-9]\d*)$/,
+                            message: '人数只能由数字组成 '
+                        }
+            		}
+            	}
+//          	boardType:{
+//          		message:'餐桌类型不合法',
+//          		trigger:"change",
+//          		validators:{
+//          			notEmpty:{
+//          				message:'餐桌名不能为空'
+//          			},
+//          			stringLength:{
+//          				min:1,
+//          				max:1,
+//          				message:'请输入1或2;1、中餐桌,2、西餐桌'
+//          			}
+//          		}
+//          	}
+            }
+		})
+		
+	})
+    
+    /*滚动条*/
+    $('.panel-body').slimScroll({height: "100%", color: '#000', railOpacity: .4, alwaysVisible: !1});
+
+    $(document).ready(function () {
+        // 不为空，说明是新增
+        if ($("#boardId").val() != "") {
+            $("#boardName").attr("readonly", "readonly");
+            $("#boardName").css("color", "gray");
+
+            // 下拉修改时候的默认
+
+        }
+    });
+
+	 //获取url中的参数
+	function getParams(key) {
+        var reg = new RegExp("(^|&)" + key + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) {
+            return unescape(r[2]);
+        }
+        return null;
+   	};          
+	var boardId=getParams("boardId");
+	var u = "http://192.168.1.168:8080/selectBoard?id="+boardId+"&sessionId=" +sessionId;
+	function getData(boardId){
+//		if ($("#boardId").val() == "") {
+//          $("#boardName").focus();
+//          return false;
+//      }
+		
+		$.ajax({
+            url: u,
+            type: 'post',
+            async: true,    //或false,是否异步
+            timeout: 10000,    //超时时间
+            cache: false,
+            error: function (data) {
+                alert("系统错误，请联系维护人员");
+            },
+            success:function (data) {
+                var boardId = data.boardId;  
+                var boardName = data.boardName;  
+                var boardPeopleNumber = data.boardPeopleNumber;  
+                var boardType = data.boardType;  
+				console.log(boardType);
+				$("#boardId").val(boardId).change();  
+				$("#boardName").val(boardName).change();  
+				$("#boardPeopleNumber").val(boardPeopleNumber).change();  
+				if(boardType==1)
+				 $('input:radio[name="ans_boardType"]').get(0).checked=true;
+				else if(boardType==2)
+				 $('input:radio[name="ans_boardType"]').get(1).checked=true;
+				$("#boardType").val(boardType).change();  
+            }
+		});
+	}
+	if(boardId!=null){
+		getData(boardId);
+	}
+	
+	
+    //保存
+     $("#submitButton").click(function (){
+     	//进行表单验证
+     	boardForm.boardType.value= boardForm.ans_boardType.value;
+     	var bv = form.data('bootstrapValidator');
+//   	bv.validate();
+		console.log(bv.isValid());
+     	if(bv.isValid()){
+     		if ($("#boardId").val() == "") {
+	             $.ajax({
+		            url: 'http://192.168.1.168:8080/newBoardSubmit?sessionId=' +sessionId,
+		            data: $('#boardForm').serialize(),
+		            dataType: 'JSON',
+		            type: 'POST',
+		            async: true,    //或false,是否异步
+		            timeout: 10000,    //超时时间
+		            cache: false,
+		            error: function (data) {
+		                alert("系统错误，请联系维护人员");
+		            },
+		            success: function (data) {
+		                console.log(data.success);
+		                if (data.success) {
+		                    // close 当前对话框
+		                    parent.layer.close(parent.layer.getFrameIndex(window.name));
+		                    parent.location.reload(true);
+
+		                } else {
+		                    layer.msg(data.message, {
+		                        time: 2000, //2s后自动关闭
+		                        icon: 2
+		                    });
+		                }
+		            }
+		        });
+	        } else {
+		        $.ajax({
+		            url: 'http://192.168.1.168:8080/editBoardSubmit?sessionId=' +sessionId,
+		            data: $('#boardForm').serialize(),
+		            dataType: 'JSON',
+		            type: 'POST',
+		            async: true,    //或false,是否异步
+		            timeout: 10000,    //超时时间
+		            cache: false,
+		            
+		            error: function (data) {
+		                alert("系统错误，请联系维护人员");
+		            },
+		            success: function (data) {
+//		                console.log(data.success);
+		                if (data.success) {
+		                    // close 当前对话框
+		                    parent.layer.close(parent.layer.getFrameIndex(window.name));
+		                    parent.location.reload(true);
+		//                  $("#boardstable").bootstrapTable('refresh');
+		                } else {
+		                    layer.msg(data.message, {
+		                        time: 2000, //2s后自动关闭
+		                        icon: 2
+		                    });
+		                }
+		            }
+		        });
+	
+	        }
+     	}
+        
+
+    })
+
+</script>
+
+</html>
